@@ -1,0 +1,20 @@
+{
+  "name": "WebAssembly-demo",
+  "version": "1.0.0",
+  "description": "WebAssembly初探",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gitHber/WebAssembly-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gitHber/WebAssembly-demo/issues"
+  },
+  "homepage": "https://github.com/gitHber/WebAssembly-demo#readme"
+}

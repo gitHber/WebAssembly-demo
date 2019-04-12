@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>WebAssembly</title>
+  </head>
+  <body style="text-align: center;">
+    <h1 style="margin-top: 200px;">WebAssembly初探(斐波那契数列)</h1>
+    <div style="margin-top: 100px;">
+      <input id="number" type="text" placeholder="请输入整数" />
+      <button onclick="calc()">计算</button>
+    </div>
+    
+    <div style="margin-top: 40px;">
+      js(递归)计算时长:
+      <span id="jsTime" style="color: red;">0ms</span>
+      &nbsp; wasm(递归)计算时长:
+      <span id="wasmTime" style="color: red;">0ms</span><br/>
+      js计算时长:
+      <span id="jsTime2" style="color: red;">0ms</span>
+      &nbsp; wasm计算时长:
+      <span id="wasmTime2" style="color: red;">0ms</span>
+    </div>
+    <script>
+      // 加载wasm
+      fetch("f.wasm")
+        .then(res => res.arrayBuffer())
+        .then(bytes =>
+          WebAssembly.instantiate(bytes, {
+            window: {
+              alert: window.alert
+            }
+          })
+        )
+        .then(mod => {
+          window.wasm = mod.instance.exports;
+        });
+      function f(num) {
+        if (num === 1 || num === 2) {
+          return 1;
+        }
+        return f(num - 1) + f(num - 2);
+      }
+      function f2(num){
+        if (num === 1 || num === 2) {
+          return 1;
+        }
+        var a = 1
+        var b = 1
+        for(let i = 3;i<=num;i++){
+          var temp = b
+          b = a+b
+          a = temp
+        }
+        return b
+      }
+    
+      // 计算
+      function calc() {
+        var reg = /^\d+$/;
+        var value = document.getElementById("number").value;
+        if (reg.test(value)) {
+          value = parseInt(value);
+          var jsTime = runTime(f, value)
+          var wasmTime = runTime(wasm.f, value)
+          var jsTime2 = runTime(f2, value)
+          var wasmTime2 = runTime(wasm.f2, value)
+          console.log(jsTime, wasmTime, jsTime2, wasmTime2)
+
+          document.getElementById("jsTime").innerText = jsTime + "ms";
+          document.getElementById("wasmTime").innerText = wasmTime + "ms";
+          document.getElementById("jsTime2").innerText = jsTime2 + "ms";
+          document.getElementById("wasmTime2").innerText = wasmTime2 + "ms";
+        } else {
+          alert("请输入整数");
+        }
+      }
+      function runTime(fun, params) {
+        var startTime = new Date().getTime();
+        console.log(fun.call(null, params))
+        return new Date().getTime() - startTime;
+      }
+    </script>
+  </body>
+</html>
